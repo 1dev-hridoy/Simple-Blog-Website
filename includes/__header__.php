@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal Blog</title>
+    <meta name="description" content="Welcome to Personal Blog - a place where ideas, stories, and knowledge come to life. Explore insightful articles on technology, lifestyle, and more.">
+    <meta name="keywords" content="personal blog, technology, lifestyle, travel, insights, stories, knowledge">
+    <meta name="author" content="Your Name">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Personal Blog - Insights, Stories & Thoughts">
+    <meta property="og:description" content="Explore articles on technology, lifestyle, travel, and more.">
+    <meta property="og:image" content="https://yourwebsite.com/og-image.jpg">
+    <meta property="og:url" content="https://yourwebsite.com">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Personal Blog - Insights, Stories & Thoughts">
+    <meta name="twitter:description" content="Explore articles on technology, lifestyle, travel, and more.">
+    <meta name="twitter:image" content="https://yourwebsite.com/twitter-image.jpg">
+    <link rel="canonical" href="https://yourwebsite.com">
+    <link rel="icon" href="https://yourwebsite.com/favicon.ico" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -33,6 +48,22 @@
             },
         }
     </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        "name": "Personal Blog",
+        "url": "https://yourwebsite.com",
+        "author": {
+            "@type": "Person",
+            "name": "Your Name"
+        },
+        "description": "Explore articles on technology, lifestyle, travel, and more.",
+        "image": "https://yourwebsite.com/og-image.jpg"
+    }
+    </script>
+</head>
+
 </head>
 <body class="bg-gray-900 text-gray-100">
     <nav class="fixed top-0 w-full bg-gray-800/95 backdrop-blur-sm z-50">
