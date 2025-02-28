@@ -6,3 +6,17 @@ CREATE TABLE hero_section (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+
+-- footer section table
+CREATE TABLE footer_values (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    twitter_url VARCHAR(255),
+    linkedIn_url VARCHAR(255),
+    github_url VARCHAR(255),
+    copyright_txt TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
