@@ -58,16 +58,22 @@
                 </button>
             </div>
             <nav>
-                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <a href="./" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
                     <i class="fas fa-home mr-2"></i>Dashboard
                 </a>
-                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
-                    <i class="fas fa-users mr-2"></i>Users
+                <a href="./category.php" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <i class="fa-solid fa-box mr-2"></i></i>Category
                 </a>
-                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
-                    <i class="fas fa-chart-bar mr-2"></i>Analytics
+                <a href="./post.php" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <i class="fa-solid fa-pen mr-2"></i>Post
                 </a>
-                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <a href="./messages.php" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <i class="fa-solid fa-envelope mr-2"></i>Messages
+                </a>
+                <a href="./analytics.php" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <i class="fa-solid fa-chart-pie mr-2"></i>Analytics
+                </a>
+                <a href="./settings.php" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
                     <i class="fas fa-cog mr-2"></i>Settings
                 </a>
             </nav>
