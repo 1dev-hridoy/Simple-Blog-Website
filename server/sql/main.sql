@@ -20,3 +20,24 @@ CREATE TABLE footer_values (
 );
 
 
+-- user bio
+CREATE TABLE bio (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    image_url VARCHAR(255),
+    name VARCHAR(255) NOT NULL,
+    bio TEXT,
+    skills TEXT,
+    experience TEXT,
+    interests TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+-- category table
+CREATE TABLE category (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    edited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
