@@ -8,16 +8,52 @@ ini_set('display_errors', 1);
 
 $alert = []; // Store alert data
 
+// Function to check if URL exists and generate unique URL
+function generateUniqueUrl($pdo, $baseUrl) {
+    $url = $baseUrl;
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM posts WHERE url = ?");
+    $stmt->execute([$url]);
+    $exists = $stmt->fetchColumn();
+    
+    if ($exists) {
+        do {
+            // Generate 3 random digits
+            $random = str_pad(rand(0, 999), 3, '0', STR_PAD_LEFT);
+            $url = $baseUrl . '-' . $random;
+            
+            $stmt->execute([$url]);
+            $exists = $stmt->fetchColumn();
+        } while ($exists);
+    }
+    
+    return $url;
+}
+
+// Get categories for dropdown
+try {
+    $stmt = $pdo->query("SELECT * FROM category ORDER BY name ASC");
+    $categories = $stmt->fetchAll();
+} catch(PDOException $e) {
+    $alert = [
+        'type' => 'error',
+        'title' => 'Error!',
+        'message' => "Failed to fetch categories: " . $e->getMessage()
+    ];
+}
+
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         // Get form data
         $title = $_POST['title'] ?? '';
-        $url = $_POST['url'] ?? '';
+        $baseUrl = $_POST['url'] ?? '';
         $description = $_POST['description'] ?? '';
         $content = $_POST['content'] ?? '';
         $category = $_POST['category'] ?? '';
         $tags = $_POST['tags'] ?? '';
+        
+        // Generate unique URL
+        $url = generateUniqueUrl($pdo, $baseUrl);
         
         // Handle featured image upload
         $featured_image = null;
@@ -61,10 +97,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if ($stmt->execute($params)) {
             $post_id = $pdo->lastInsertId();
-            
-            // Handle content images if any (from Quill editor)
-            // You might want to process the content to find and save any embedded images
-            // This is a basic example - you might need to enhance it based on your needs
             
             $alert = [
                 'type' => 'success',
@@ -119,7 +151,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="mb-4">
                     <label for="category" class="block text-gray-700 text-sm font-bold mb-2">Category:</label>
-                    <input type="text" id="category" name="category" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <select id="category" name="category" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        <option value="">Select a category</option>
+                        <?php foreach ($categories as $cat): ?>
+                            <option value="<?php echo htmlspecialchars($cat['name']); ?>">
+                                <?php echo htmlspecialchars($cat['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <div class="mt-2">
+                        <button type="button" onclick="openNewCategoryModal()" class="text-sm text-blue-500 hover:text-blue-700">
+                            + Add New Category
+                        </button>
+                    </div>
                 </div>
                 <div class="mb-4">
                     <label for="tags" class="block text-gray-700 text-sm font-bold mb-2">Tags:</label>
@@ -134,6 +178,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 </main>
+
+<!-- New Category Modal -->
+<div id="newCategoryModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity">
+            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Add New Category</h3>
+                <input type="text" id="newCategoryName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Category Name">
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" onclick="saveNewCategory()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    Save
+                </button>
+                <button type="button" onclick="closeNewCategoryModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
@@ -155,6 +223,70 @@ function previewImage(event, previewId) {
         }
     }
     reader.readAsDataURL(event.target.files[0]);
+}
+
+function openNewCategoryModal() {
+    document.getElementById('newCategoryModal').classList.remove('hidden');
+}
+
+function closeNewCategoryModal() {
+    document.getElementById('newCategoryModal').classList.add('hidden');
+    document.getElementById('newCategoryName').value = '';
+}
+
+function saveNewCategory() {
+    const categoryName = document.getElementById('newCategoryName').value;
+    if (!categoryName) {
+        alert('Please enter a category name');
+        return;
+    }
+
+    // Send AJAX request to save new category
+    fetch('./includes/__save_category__.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'name=' + encodeURIComponent(categoryName)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Add new option to select
+            const select = document.getElementById('category');
+            const option = new Option(categoryName, categoryName);
+            select.add(option);
+            select.value = categoryName;
+            
+            closeNewCategoryModal();
+            
+            // Show success message
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Category added successfully!',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        } else {
+            throw new Error(data.message);
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: error.message,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -197,5 +329,5 @@ Swal.fire({
 
 <?php 
 include './includes/__footer__.php';
-ob_end_flush(); // End output buffering and send output
+ob_end_flush();
 ?>
