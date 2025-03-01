@@ -1,24 +1,43 @@
+<?php
+$current_datetime = "2025-03-01 19:15:06";
+$current_user = "hridoy09bg";
+
+include 'server/dbcon.php';
+
+try {
+    $stmt = $pdo->query("SELECT * FROM seo LIMIT 1");
+    $seo_data = $stmt->fetch();
+} catch(PDOException $e) {
+    $seo_data = null;
+}
+?>
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Blog</title>
-    <meta name="description" content="Welcome to Personal Blog - a place where ideas, stories, and knowledge come to life. Explore insightful articles on technology, lifestyle, and more.">
-    <meta name="keywords" content="personal blog, technology, lifestyle, travel, insights, stories, knowledge">
-    <meta name="author" content="Your Name">
+    
+    <title><?php echo isset($seo_data['title']) ? htmlspecialchars($seo_data['title']) : 'Personal Blog'; ?></title>
+    
+    <meta name="description" content="<?php echo isset($seo_data['description']) ? htmlspecialchars($seo_data['description']) : 'Welcome to Personal Blog'; ?>">
+    <meta name="keywords" content="<?php echo isset($seo_data['keywords']) ? htmlspecialchars($seo_data['keywords']) : ''; ?>">
+    <meta name="author" content="<?php echo isset($seo_data['author']) ? htmlspecialchars($seo_data['author']) : ''; ?>">
     <meta name="robots" content="index, follow">
-    <meta property="og:title" content="Personal Blog - Insights, Stories & Thoughts">
-    <meta property="og:description" content="Explore articles on technology, lifestyle, travel, and more.">
-    <meta property="og:image" content="https://yourwebsite.com/og-image.jpg">
-    <meta property="og:url" content="https://yourwebsite.com">
+    
+    <meta property="og:title" content="<?php echo isset($seo_data['og_title']) ? htmlspecialchars($seo_data['og_title']) : ''; ?>">
+    <meta property="og:description" content="<?php echo isset($seo_data['og_description']) ? htmlspecialchars($seo_data['og_description']) : ''; ?>">
+    <meta property="og:image" content="<?php echo isset($seo_data['og_image']) ? './admin/' . htmlspecialchars($seo_data['og_image']) : ''; ?>">
+    <meta property="og:url" content="<?php echo isset($seo_data['og_url']) ? htmlspecialchars($seo_data['og_url']) : ''; ?>">
     <meta property="og:type" content="website">
+    
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Personal Blog - Insights, Stories & Thoughts">
-    <meta name="twitter:description" content="Explore articles on technology, lifestyle, travel, and more.">
-    <meta name="twitter:image" content="https://yourwebsite.com/twitter-image.jpg">
-    <link rel="canonical" href="https://yourwebsite.com">
-    <link rel="icon" href="https://yourwebsite.com/favicon.ico" type="image/x-icon">
+    <meta name="twitter:title" content="<?php echo isset($seo_data['twitter_title']) ? htmlspecialchars($seo_data['twitter_title']) : ''; ?>">
+    <meta name="twitter:description" content="<?php echo isset($seo_data['twitter_description']) ? htmlspecialchars($seo_data['twitter_description']) : ''; ?>">
+    <meta name="twitter:image" content="<?php echo isset($seo_data['twitter_image']) ? './admin/' . htmlspecialchars($seo_data['twitter_image']) : ''; ?>">
+    
+    <link rel="canonical" href="<?php echo isset($seo_data['canonical_url']) ? htmlspecialchars($seo_data['canonical_url']) : ''; ?>">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -30,41 +49,22 @@
                     },
                     keyframes: {
                         blob: {
-                            '0%': {
-                                transform: 'translate(0px, 0px) scale(1)',
-                            },
-                            '33%': {
-                                transform: 'translate(30px, -50px) scale(1.1)',
-                            },
-                            '66%': {
-                                transform: 'translate(-20px, 20px) scale(0.9)',
-                            },
-                            '100%': {
-                                transform: 'translate(0px, 0px) scale(1)',
-                            },
-                        },
-                    },
-                },
-            },
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' }
+                        }
+                    }
+                }
+            }
         }
     </script>
+    
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Blog",
-        "name": "Personal Blog",
-        "url": "https://yourwebsite.com",
-        "author": {
-            "@type": "Person",
-            "name": "Your Name"
-        },
-        "description": "Explore articles on technology, lifestyle, travel, and more.",
-        "image": "https://yourwebsite.com/og-image.jpg"
-    }
+    <?php echo isset($seo_data['schema_data']) ? $seo_data['schema_data'] : '{}'; ?>
     </script>
 </head>
-
-</head>
+<body>
 <body class="bg-gray-900 text-gray-100">
     <nav class="fixed top-0 w-full bg-gray-800/95 backdrop-blur-sm z-50">
         <div class="container mx-auto px-4 py-3">
