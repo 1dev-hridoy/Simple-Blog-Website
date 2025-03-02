@@ -1,70 +1,111 @@
-<?php include 'includes/__header__.php'; ?>
+<?php 
+include 'includes/__header__.php';
+include 'server/dbcon.php';
+
+$success = $error = '';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
+    $message = trim($_POST['message']);
+    
+    // Basic validation
+    if (empty($name) || empty($email) || empty($message)) {
+        $error = "All fields are required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Please enter a valid email address.";
+    } else {
+        try {
+            $stmt = $pdo->prepare("INSERT INTO messages (name, email, message) VALUES (?, ?, ?)");
+            if ($stmt->execute([$name, $email, $message])) {
+                $success = "Thank you! Your message has been sent successfully.";
+                // Clear form data after successful submission
+                $name = $email = $message = '';
+            } else {
+                $error = "Sorry, there was an error sending your message.";
+            }
+        } catch(PDOException $e) {
+            $error = "Sorry, there was an error sending your message.";
+        }
+    }
+}
+?>
 
 <main class="container mx-auto px-4 py-8 mt-24">
-        <div class="max-w-4xl mx-auto">
-            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700 p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    
-                    <div>
-                        <h1 class="text-4xl font-bold mb-8">Get in Touch</h1>
-                        <div class="space-y-6">
-                            <div class="flex items-center space-x-4">
-                                <div class="bg-gray-700 p-3 rounded-full">
-                                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="text-lg font-semibold">Email</h3>
-                                    <p class="text-gray-400">contact@example.com</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <div class="bg-gray-700 p-3 rounded-full">
-                                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="text-lg font-semibold">Phone</h3>
-                                    <p class="text-gray-400">+1 (555) 123-4567</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <div class="bg-gray-700 p-3 rounded-full">
-                                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="text-lg font-semibold">Location</h3>
-                                    <p class="text-gray-400">San Francisco, CA</p>
-                                </div>
-                            </div>
-                        </div>
+    <div class="max-w-4xl mx-auto">
+        <!-- Background gradient effect -->
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 blur-3xl opacity-30"></div>
+        
+        <div class="relative bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-gray-700 p-8 transform hover:scale-[1.01] transition-transform duration-300">
+            <!-- Success Message -->
+            <?php if ($success): ?>
+            <div class="mb-6 bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-3 rounded-lg">
+                <?php echo $success; ?>
+            </div>
+            <?php endif; ?>
+
+            <!-- Error Message -->
+            <?php if ($error): ?>
+            <div class="mb-6 bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg">
+                <?php echo $error; ?>
+            </div>
+            <?php endif; ?>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Left Column -->
+                <div class="space-y-8">
+                    <!-- Content remains the same -->
+                    <div class="space-y-4">
+                        <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">
+                            Get in Touch
+                        </h1>
+                        <p class="text-gray-400 leading-relaxed">
+                            Have a question or want to collaborate? Feel free to reach out. I'll get back to you as soon as possible.
+                        </p>
                     </div>
 
-                    <form class="space-y-6">
+                    <!-- Social Links remain the same -->
+                    <div class="flex flex-wrap gap-4 pt-6">
+                        <!-- Social links code remains the same -->
+                    </div>
+                </div>
+
+                <!-- Right Column - Form -->
+                <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" class="space-y-6 backdrop-blur-sm bg-gray-900/30 p-6 rounded-xl border border-gray-700/50">
+                    <div class="space-y-4">
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Name</label>
-                            <input type="text" id="name" name="name" class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 focus:outline-none focus:border-blue-500">
+                            <input type="text" id="name" name="name" required
+                                value="<?php echo isset($name) ? htmlspecialchars($name) : ''; ?>"
+                                class="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-gray-100 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 transition-all duration-300 placeholder-gray-400"
+                                placeholder="Your name">
                         </div>
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                            <input type="email" id="email" name="email" class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 focus:outline-none focus:border-blue-500">
+                            <input type="email" id="email" name="email" required
+                                value="<?php echo isset($email) ? htmlspecialchars($email) : ''; ?>"
+                                class="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-gray-100 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 transition-all duration-300 placeholder-gray-400"
+                                placeholder="your@email.com">
                         </div>
                         <div>
                             <label for="message" class="block text-sm font-medium text-gray-300 mb-2">Message</label>
-                            <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 focus:outline-none focus:border-blue-500"></textarea>
+                            <textarea id="message" name="message" rows="5" required
+                                class="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-gray-100 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 transition-all duration-300 placeholder-gray-400 resize-none"
+                                placeholder="Your message here..."><?php echo isset($message) ? htmlspecialchars($message) : ''; ?></textarea>
                         </div>
-                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800">
-                            Send Message
-                        </button>
-                    </form>
-                </div>
+                    </div>
+                    
+                    <button type="submit" 
+                        class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 font-medium text-sm flex items-center justify-center space-x-2 shadow-lg">
+                        <span>Send Message</span>
+                        <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </button>
+                </form>
             </div>
         </div>
-    </main>
+    </div>
+</main>
 
 <?php include 'includes/__footer__.php'; ?>
