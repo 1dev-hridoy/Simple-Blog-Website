@@ -17,10 +17,7 @@ try {
             <?php if(!empty($posts)): ?>
                 <?php foreach($posts as $post): ?>
                 <article class="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300">
-                <img src="<?php echo htmlspecialchars('../uploads/' . $post['featured_image']); ?>" alt="Featured Image">
-
-                         alt="<?php echo htmlspecialchars($post['title']); ?>" 
-                         class="w-full h-48 object-cover">
+                <img src="<?php echo htmlspecialchars('./' . $post['featured_image']); ?>" alt="Featured Image">
                     <div class="p-6">
                         <h2 class="text-xl font-bold mb-4 text-white"><?php echo htmlspecialchars($post['title']); ?></h2>
                         <p class="text-gray-400 mb-4">
