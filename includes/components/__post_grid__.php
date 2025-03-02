@@ -17,7 +17,13 @@ try {
             <?php if(!empty($posts)): ?>
                 <?php foreach($posts as $post): ?>
                 <article class="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300">
-                <img src="<?php echo htmlspecialchars('./' . $post['featured_image']); ?>" alt="Featured Image">
+                <img 
+    data-src="<?php echo htmlspecialchars('./' . $post['featured_image']); ?>" 
+    alt="Featured Image" 
+    loading="lazy" 
+    style="width: 300px; height: 200px; object-fit: cover; border-radius: 8px;"
+>
+
                     <div class="p-6">
                         <h2 class="text-xl font-bold mb-4 text-white"><?php echo htmlspecialchars($post['title']); ?></h2>
                         <p class="text-gray-400 mb-4">
@@ -41,3 +47,24 @@ try {
         </div>
     </div>
 </section>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    let lazyImages = document.querySelectorAll("img[loading='lazy']");
+    let observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                let img = entry.target;
+                img.src = img.dataset.src;
+                img.removeAttribute("loading");
+                observer.unobserve(img);
+            }
+        });
+    });
+
+    lazyImages.forEach(img => {
+        img.dataset.src = img.src;
+        img.src = ""; 
+        observer.observe(img);
+    });
+});
+</script>
