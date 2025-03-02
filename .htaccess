@@ -1,0 +1,17 @@
+RewriteEngine On
+
+# Ensure existing files (images, CSS, JS, etc.) are loaded normally
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule .* - [L]
+
+# Remove .php from URLs and redirect cleanly
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/([^?]+)\.php [NC]
+RewriteRule ^(.*)\.php$ /$1 [R=301,L]
+
+# Allow access to PHP files without .php (e.g., /dashboard -> /dashboard.php)
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^/.]+)$ $1.php [L]
+
+# Handle dynamic URLs like /anything/slug -> anything.php?url=slug
+RewriteRule ^([^/]+)/([^/]+)$ $1.php?url=$2 [QSA,L]
