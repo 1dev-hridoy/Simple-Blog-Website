@@ -33,7 +33,7 @@ try {
                                 substr(htmlspecialchars($post['description']), 0, 150) . '...' : 
                                 htmlspecialchars($post['description']); ?>
                         </p>
-                        <a href="post.php?url=<?php echo htmlspecialchars($post['url']); ?>" 
+                        <a href="post/<?php echo htmlspecialchars($post['url']); ?>" 
                            class="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                             Read More
                         </a>
